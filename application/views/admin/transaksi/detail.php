@@ -92,7 +92,17 @@
             </div>
         </div>
 
-        <?php if ($transaksi['denda'] > 0): ?>
+        <?php if ($transaksi['status'] == 'dipinjam' && strtotime($transaksi['tanggal_kembali']) < strtotime(date('Y-m-d'))): ?>
+            <?php 
+                $diff = (strtotime(date('Y-m-d')) - strtotime($transaksi['tanggal_kembali'])) / (60 * 60 * 24);
+                $denda_berjalan = $diff * 1000;
+            ?>
+            <hr>
+            <div class="text-center">
+                <h6 class="text-danger">Denda Keterlambatan (Berjalan)</h6>
+                <h3 class="text-danger">Rp <?= number_format($denda_berjalan, 0, ',', '.') ?></h3>
+            </div>
+        <?php elseif ($transaksi['denda'] > 0): ?>
             <hr>
             <div class="text-center">
                 <h6 class="text-danger">Denda Keterlambatan</h6>

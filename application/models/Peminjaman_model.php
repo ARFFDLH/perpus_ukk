@@ -42,12 +42,15 @@ class Peminjaman_model extends CI_Model {
         return $this->db->get($this->table)->result_array();
     }
 
-    public function get_by_anggota_with_detail($id_anggota) {
+    public function get_by_anggota_with_detail($id_anggota, $limit = null) {
         $this->db->select('peminjaman.*, buku.judul, buku.kode_buku, buku.pengarang');
         $this->db->from($this->table);
         $this->db->join('buku', 'buku.id = peminjaman.id_buku');
         $this->db->where('peminjaman.id_anggota', $id_anggota);
         $this->db->order_by('peminjaman.created_at', 'DESC');
+        if ($limit) {
+            $this->db->limit($limit);
+        }
         return $this->db->get()->result_array();
     }
 
@@ -101,5 +104,27 @@ class Peminjaman_model extends CI_Model {
         $this->db->where('id_anggota', $id_anggota);
         $this->db->where('status', 'dipinjam');
         return $this->db->count_all_results($this->table);
+    }
+
+    public function get_report($filters = []) {
+        $this->db->select('peminjaman.*, buku.judul, buku.kode_buku, anggota.nama, anggota.nis');
+        $this->db->from($this->table);
+        $this->db->join('buku', 'buku.id = peminjaman.id_buku');
+        $this->db->join('anggota', 'anggota.id = peminjaman.id_anggota');
+        
+        $start = !empty($filters['start_date']) ? $filters['start_date'] : null;
+        $end = !empty($filters['end_date']) ? $filters['end_date'] : null;
+
+        if ($start) {
+            $this->db->where('peminjaman.tanggal_pinjam >=', $start);
+        }
+        
+        if ($end) {
+            $this->db->where('peminjaman.tanggal_kembali <=', $end);
+        }
+        
+        $this->db->order_by('peminjaman.tanggal_pinjam', 'ASC'); // Use ASC to show chronological sequence
+        $this->db->order_by('peminjaman.id', 'ASC');
+        return $this->db->get()->result_array();
     }
 }

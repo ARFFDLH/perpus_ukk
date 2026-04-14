@@ -58,7 +58,7 @@ class Peminjaman extends CI_Controller {
         // Kurangi stok buku
         $this->Buku_model->update($id_buku, array('stok' => $buku['stok'] - 1));
 
-        $this->session->set_flashdata('success', 'Buku berhasil dipinjam! Batas pengembalian: ' . date('d/m/Y', strtotime('+7 days')));
+        $this->session->set_flashdata('success', 'Buku berhasil dipinjam! Batas pengembalian: ' . date('d/m/Y', strtotime('+1 days')));
         redirect('peminjaman/riwayat');
     }
 

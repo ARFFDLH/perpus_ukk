@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Batas Pengembalian <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="tanggal_kembali" value="<?= set_value('tanggal_kembali', date('Y-m-d', strtotime('+7 days'))) ?>" required>
+                    <input type="date" class="form-control" name="tanggal_kembali" value="<?= set_value('tanggal_kembali', date('Y-m-d', strtotime('+1 days'))) ?>" required>
                     <?= form_error('tanggal_kembali', '<small class="text-danger">', '</small>') ?>
                 </div>
             </div>

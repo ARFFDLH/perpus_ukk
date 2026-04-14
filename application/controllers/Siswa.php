@@ -24,7 +24,7 @@ class Siswa extends CI_Controller {
         $data['anggota'] = $this->Anggota_model->get_by_id($id_anggota);
         $data['total_pinjaman'] = $this->Peminjaman_model->count_by_anggota($id_anggota);
         $data['pinjaman_aktif'] = $this->Peminjaman_model->count_active_by_anggota($id_anggota);
-        $data['riwayat_terbaru'] = $this->Peminjaman_model->get_by_anggota($id_anggota, 5);
+        $data['riwayat_terbaru'] = $this->Peminjaman_model->get_by_anggota_with_detail($id_anggota, 5);
         
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar_siswa', $data);

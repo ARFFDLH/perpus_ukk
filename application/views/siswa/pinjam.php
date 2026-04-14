@@ -1,55 +1,79 @@
-<div class="page-header mb-4">
-    <h2><i class="bi bi-book me-2"></i>Pinjam Buku</h2>
-    <p class="text-muted mb-0">Pilih buku yang ingin dipinjam</p>
+<div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3" style="border-bottom: 1px solid #e2e8f0;">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-journal-album me-2" style="color: var(--primary-color);"></i>Katalog Buku</h2>
+        <p class="text-muted mb-0">Eksplorasi koleksi dan pinjam buku favoritmu</p>
+    </div>
 </div>
 
-<div class="row">
+<div class="row g-4 mb-5">
     <?php if (empty($buku)): ?>
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl);">
                 <div class="card-body text-center py-5">
-                    <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
-                    <p class="text-muted mt-3">Tidak ada buku yang tersedia saat ini</p>
+                    <div class="mb-4 d-inline-flex justify-content-center align-items-center" style="width: 100px; height: 100px; background-color: var(--primary-light); border-radius: 50%;">
+                        <i class="bi bi-bookshelf" style="font-size: 48px; color: var(--primary-color);"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Koleksi Kosong</h4>
+                    <p class="text-muted mb-0">Maaf, belum ada buku yang tersedia untuk dipinjam saat ini.</p>
                 </div>
             </div>
         </div>
     <?php else: ?>
         <?php foreach ($buku as $b): ?>
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="flex-shrink-0">
-                            <div style="width: 60px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-book text-white" style="font-size: 24px;"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <span class="badge bg-primary mb-2"><?= htmlspecialchars($b['kode_buku']) ?></span>
-                            <h5 class="mb-1"><?= htmlspecialchars($b['judul']) ?></h5>
-                            <p class="text-muted mb-0 small"><?= htmlspecialchars($b['pengarang']) ?></p>
-                        </div>
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm book-card" style="border-radius: var(--radius-xl); overflow: hidden; transition: var(--transition-all); display: flex; flex-direction: column;">
+                <!-- Card Header (Cover Image Placeholder) -->
+                <div class="position-relative pt-4 pb-3 px-3 w-100 d-flex justify-content-center" style="background: linear-gradient(135deg, rgba(67, 56, 202, 0.05), rgba(139, 92, 246, 0.1)); min-height: 200px;">
+                    <div class="shadow-sm" style="width: 120px; height: 160px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 4px 12px 12px 4px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <!-- Book binding spine effect -->
+                        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: rgba(0,0,0,0.2); border-radius: 4px 0 0 4px;"></div>
+                        <i class="bi bi-book text-white opacity-75" style="font-size: 36px;"></i>
+                    </div>
+                    <span class="badge position-absolute top-0 end-0 m-3 shadow-sm <?= $b['stok'] > 0 ? 'bg-success' : 'bg-danger' ?>" style="font-weight: 600; font-size: 0.75rem; border-radius: var(--radius-md);">
+                        <i class="bi <?= $b['stok'] > 0 ? 'bi-check-circle' : 'bi-x-circle' ?> me-1"></i>Stok: <?= $b['stok'] ?>
+                    </span>
+                </div>
+                
+                <!-- Card Body -->
+                <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                    <div class="mb-2">
+                        <span class="badge" style="background: var(--primary-light); color: var(--primary-color); font-size: 0.7rem; font-weight: 600; padding: 0.35em 0.65em;">
+                            <?= htmlspecialchars($b['kode_buku']) ?>
+                        </span>
+                        <?php if ($b['kategori']): ?>
+                            <span class="badge border text-muted" style="background: white; font-size: 0.7rem; font-weight: 500;">
+                                <?= htmlspecialchars($b['kategori']) ?>
+                            </span>
+                        <?php endif; ?>
                     </div>
                     
-                    <div class="mb-3">
-                        <?php if ($b['kategori']): ?>
-                            <span class="badge bg-light text-dark me-1"><?= htmlspecialchars($b['kategori']) ?></span>
-                        <?php endif; ?>
+                    <h5 class="fw-bold mb-1 text-dark" style="line-height: 1.3; font-size: 1.15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <?= htmlspecialchars($b['judul']) ?>
+                    </h5>
+                    
+                    <p class="text-muted mb-3" style="font-size: 0.85rem; font-weight: 500;">
+                        Oleh <span class="text-dark"><?= htmlspecialchars($b['pengarang']) ?></span>
                         <?php if ($b['tahun_terbit']): ?>
-                            <span class="badge bg-light text-dark"><?= $b['tahun_terbit'] ?></span>
+                            • <?= $b['tahun_terbit'] ?>
                         <?php endif; ?>
-                    </div>
+                    </p>
 
                     <?php if ($b['deskripsi']): ?>
-                        <p class="small text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <p class="text-muted" style="font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: auto;">
                             <?= htmlspecialchars($b['deskripsi']) ?>
                         </p>
+                    <?php else: ?>
+                        <div class="mt-auto"></div>
                     <?php endif; ?>
                 </div>
-                <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
-                    <span class="badge bg-success">Stok: <?= $b['stok'] ?></span>
-                    <a href="<?= base_url('peminjaman/pinjam/' . $b['id']) ?>" class="btn btn-primary btn-sm" onclick="return confirm('Yakin ingin meminjam buku ini?')">
-                        <i class="bi bi-cart-plus me-1"></i>Pinjam
+                
+                <!-- Card Footer -->
+                <div class="card-footer bg-transparent border-0 p-4 pt-0 mt-3 d-flex gap-2">
+                    <a href="<?= base_url('peminjaman/pinjam/' . $b['id']) ?>" 
+                       class="btn btn-primary flex-grow-1" style="border-radius: var(--radius-md); font-weight: 600;" 
+                       onclick="return confirm('Yakin ingin meminjam buku <?= htmlspecialchars(addslashes($b['judul'])) ?>?')"
+                       <?= $b['stok'] <= 0 ? 'style="pointer-events: none; opacity: 0.6;" disabled' : '' ?>>
+                        <i class="bi <?= $b['stok'] > 0 ? 'bi-cart-plus' : 'bi-slash-circle' ?> me-2"></i><?= $b['stok'] > 0 ? 'Pinjam Buku' : 'Habis' ?>
                     </a>
                 </div>
             </div>
@@ -57,3 +81,10 @@
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
+
+<style>
+.book-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg) !important;
+}
+</style>
