@@ -3,6 +3,25 @@
         <h2 class="fw-bold text-dark mb-1"><i class="bi bi-journal-album me-2" style="color: var(--primary-color);"></i>Katalog Buku</h2>
         <p class="text-muted mb-0">Eksplorasi koleksi dan pinjam buku favoritmu</p>
     </div>
+    
+    <div class="mt-3 mt-md-0" style="min-width: 300px;">
+        <form action="<?= base_url('peminjaman') ?>" method="GET">
+            <div class="input-group overflow-hidden border-0 shadow-sm" style="border-radius: var(--radius-md);">
+                <span class="input-group-text bg-white border-0 ps-3">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="keyword" class="form-control border-0 py-2 ps-1" placeholder="Cari judul, pengarang..." value="<?= isset($keyword) ? htmlspecialchars($keyword) : '' ?>">
+                <button type="submit" class="btn btn-primary px-3">Cari</button>
+            </div>
+            <?php if (isset($keyword) && $keyword): ?>
+                <div class="text-end mt-1">
+                    <a href="<?= base_url('peminjaman') ?>" class="text-decoration-none small text-muted">
+                        <i class="bi bi-x-circle me-1"></i>Hapus Filter
+                    </a>
+                </div>
+            <?php endif; ?>
+        </form>
+    </div>
 </div>
 
 <div class="row g-4 mb-5">
@@ -11,10 +30,11 @@
             <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl);">
                 <div class="card-body text-center py-5">
                     <div class="mb-4 d-inline-flex justify-content-center align-items-center" style="width: 100px; height: 100px; background-color: var(--primary-light); border-radius: 50%;">
-                        <i class="bi bi-bookshelf" style="font-size: 48px; color: var(--primary-color);"></i>
+                        <i class="bi bi-search" style="font-size: 48px; color: var(--primary-color);"></i>
                     </div>
-                    <h4 class="fw-bold text-dark mb-2">Koleksi Kosong</h4>
-                    <p class="text-muted mb-0">Maaf, belum ada buku yang tersedia untuk dipinjam saat ini.</p>
+                    <h4 class="fw-bold text-dark mb-2">Buku Tidak Ditemukan</h4>
+                    <p class="text-muted mb-3">Maaf, tidak ada buku yang sesuai dengan kata kunci "<strong><?= htmlspecialchars($keyword) ?></strong>".</p>
+                    <a href="<?= base_url('peminjaman') ?>" class="btn btn-primary" style="border-radius: var(--radius-md);">Lihat Semua Buku</a>
                 </div>
             </div>
         </div>

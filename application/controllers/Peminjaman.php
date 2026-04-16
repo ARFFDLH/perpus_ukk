@@ -18,8 +18,10 @@ class Peminjaman extends CI_Controller {
     }
 
     public function index() {
-        $data['title'] = 'Daftar Buku';
-        $data['buku'] = $this->Buku_model->get_available();
+        $keyword = $this->input->get('keyword');
+        $data['title'] = 'Katalog Buku';
+        $data['buku'] = $this->Buku_model->get_available($keyword);
+        $data['keyword'] = $keyword;
         
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar_siswa', $data);

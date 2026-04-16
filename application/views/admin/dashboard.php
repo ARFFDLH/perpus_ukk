@@ -10,7 +10,6 @@
     </div>
 </div>
 
-<!-- Statistics Cards -->
 <div class="row mb-5 g-4">
     <div class="col-md-4">
         <div class="stat-card h-100 d-flex flex-column justify-content-center p-4 shadow-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border-radius: var(--radius-xl); border: none; position: relative; overflow: hidden; transition: var(--transition-all);">
@@ -56,7 +55,29 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
+<div class="row mb-5 g-4">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: var(--radius-xl);">
+            <div class="card-header bg-white border-0 py-3 px-4">
+                <h6 class="fw-bold mb-0 text-dark">Ringkasan Data Perpustakaan</h6>
+            </div>
+            <div class="card-body">
+                <div id="barChartApex"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: var(--radius-xl);">
+            <div class="card-header bg-white border-0 py-3 px-4">
+                <h6 class="fw-bold mb-0 text-dark">Status Peminjaman</h6>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <div id="radialChartApex"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="mb-5">
     <h5 class="fw-bold mb-3" style="color: var(--dark-color);"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Aksi Cepat</h5>
     <div class="row g-4 flex-wrap">
@@ -107,7 +128,6 @@
     </div>
 </div>
 
-<!-- Recent Transactions -->
 <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl); overflow: hidden;">
     <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0" style="color: var(--dark-color);">
@@ -173,6 +193,7 @@
         <?php endif; ?>
     </div>
 </div>
+
 <style>
 .stat-card:hover {
     transform: translateY(-5px);
@@ -183,3 +204,65 @@
     box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2) !important;
 }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    // Script tidak berubah, tetap menangani tampilan angka riil
+    var barOptions = {
+        series: [{
+            name: 'Jumlah',
+            data: [<?= $total_buku ?>, <?= $total_anggota ?>, <?= $total_peminjaman ?>]
+        }],
+        chart: { type: 'bar', height: 280, toolbar: { show: false } },
+        plotOptions: { bar: { borderRadius: 10, columnWidth: '50%', distributed: true } },
+        colors: ['#6366f1', '#10b981', '#f59e0b'],
+        xaxis: { categories: ['Total Buku', 'Total Anggota', 'Peminjaman Aktif'] },
+        grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
+        dataLabels: { enabled: false }
+    };
+    new ApexCharts(document.querySelector("#barChartApex"), barOptions).render();
+
+    var rawData = [<?= $status_kembali ?>, <?= $status_dipinjam ?>];
+    var radialOptions = {
+        series: [
+            <?= round(($status_kembali / ($status_dipinjam + $status_kembali ?: 1)) * 100) ?>, 
+            <?= round(($status_dipinjam / ($status_dipinjam + $status_kembali ?: 1)) * 100) ?>
+        ],
+        chart: { height: 300, type: 'radialBar' },
+        plotOptions: {
+            radialBar: {
+                hollow: { size: '40%' },
+                track: { background: '#f1f5f9' },
+                dataLabels: {
+                    name: { fontSize: '22px' },
+                    value: { 
+                        fontSize: '16px',
+                        formatter: function (val, opts) {
+                            return rawData[opts.seriesIndex];
+                        }
+                    },
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        formatter: function (w) {
+                            return <?= $status_dipinjam + $status_kembali ?>;
+                        }
+                    }
+                }
+            }
+        },
+        labels: ['Dikembalikan', 'Dipinjam'],
+        colors: ['#10b981', '#f59e0b'],
+        stroke: { lineCap: 'round' },
+        tooltip: {
+            enabled: true,
+            y: {
+                formatter: function (val, opts) {
+                    return rawData[opts.seriesIndex] + " Transaksi";
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#radialChartApex"), radialOptions).render();
+</script>

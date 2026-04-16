@@ -3,13 +3,24 @@
         <h2><i class="bi bi-file-earmark-text me-2"></i>Laporan Peminjaman</h2>
         <p class="text-muted mb-0">Manajemen laporan transaksi peminjaman buku</p>
     </div>
-    <a href="<?= base_url('laporan/cetak?start_date=' . $start_date . '&end_date=' . $end_date) ?>" class="btn btn-purple" style="background: linear-gradient(135deg, #6f42c1, #59359a); color: white; border: none; border-radius: 10px; padding: 10px 20px;" target="_blank">
+    <a href="<?= base_url('laporan/cetak?start_date=' . $start_date . '&end_date=' . $end_date . '&filter_tipe=' . ($this->input->get('filter_tipe') ?? '')) ?>" class="btn btn-purple" style="background: linear-gradient(135deg, #6f42c1, #59359a); color: white; border: none; border-radius: 10px; padding: 10px 20px;" target="_blank">
         <i class="bi bi-printer me-2"></i>Cetak PDF
     </a>
 </div>
 
 <div class="card shadow-sm mb-4">
     <div class="card-body">
+        <div class="mb-4">
+            <label class="form-label fw-bold small text-muted text-uppercase d-block mb-2">Filter Cepat</label>
+            <div class="btn-group shadow-sm" role="group">
+                <a href="<?= base_url('laporan?filter_tipe=harian') ?>" class="btn <?= $this->input->get('filter_tipe') == 'harian' ? 'btn-primary' : 'btn-outline-primary' ?>">Hari Ini</a>
+                <a href="<?= base_url('laporan?filter_tipe=mingguan') ?>" class="btn <?= $this->input->get('filter_tipe') == 'mingguan' ? 'btn-primary' : 'btn-outline-primary' ?>">7 Hari Terakhir</a>
+                <a href="<?= base_url('laporan?filter_tipe=bulanan') ?>" class="btn <?= $this->input->get('filter_tipe') == 'bulanan' ? 'btn-primary' : 'btn-outline-primary' ?>">Bulan Ini</a>
+            </div>
+        </div>
+
+        <hr class="text-muted opacity-25">
+
         <form action="<?= base_url('laporan') ?>" method="GET">
             <div class="row g-3 align-items-end">
                 <div class="col-md-5">
@@ -38,11 +49,14 @@
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
-        <?php if ($start_date || $end_date): ?>
+        <?php if ($start_date || $end_date || $this->input->get('filter_tipe')): ?>
             <div class="px-4 py-2 bg-light border-bottom d-flex justify-content-between align-items-center">
                 <small class="text-muted">
                     <i class="bi bi-info-circle me-1"></i>
                     Memfilter: 
+                    <?php if ($this->input->get('filter_tipe')): ?>
+                        <span class="badge bg-primary px-2"><?= ucfirst($this->input->get('filter_tipe')) ?></span>
+                    <?php endif; ?>
                     <?php if ($start_date): ?> Pinjam dari <strong><?= date('d/m/Y', strtotime($start_date)) ?></strong> <?php endif; ?>
                     <?php if ($start_date && $end_date): ?> & <?php endif; ?>
                     <?php if ($end_date): ?> Kembali sampai <strong><?= date('d/m/Y', strtotime($end_date)) ?></strong> <?php endif; ?>
@@ -81,11 +95,11 @@
                             <td class="px-4"><?= $no++ ?></td>
                             <td>
                                 <strong><?= htmlspecialchars($t['nama']) ?></strong><br>
-                                <small class="text-muted"><?= htmlspecialchars($t['nis']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($t['nis'] ?? '') ?></small>
                             </td>
                             <td>
                                 <?= htmlspecialchars($t['judul']) ?><br>
-                                <small class="text-muted"><?= htmlspecialchars($t['kode_buku']) ?></small>
+                                <small class="text-muted"><?= htmlspecialchars($t['kode_buku'] ?? '') ?></small>
                             </td>
                             <td><?= date('d/m/Y', strtotime($t['tanggal_pinjam'])) ?></td>
                             <td><?= date('d/m/Y', strtotime($t['tanggal_kembali'])) ?></td>
@@ -126,6 +140,7 @@
 </div>
 
 <style>
+    .bg-purple { background-color: #6f42c1; }
     .btn-purple:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);

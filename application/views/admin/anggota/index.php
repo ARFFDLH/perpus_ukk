@@ -19,7 +19,7 @@
                         <th>Nama</th>
                         <th>Kelas</th>
                         <th>Telepon</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,13 +35,20 @@
                             <td><?= htmlspecialchars($a['nama']) ?></td>
                             <td><?= htmlspecialchars($a['kelas']) ?></td>
                             <td><?= htmlspecialchars($a['telepon'] ?: '-') ?></td>
-                            <td>
-                                <a href="<?= base_url('anggota/edit/' . $a['id']) ?>" class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="<?= base_url('anggota/hapus/' . $a['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus anggota ini?')">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="<?= base_url('anggota/kartu/' . $a['id']) ?>" target="_blank" class="btn btn-sm btn-info text-white" title="Cetak Kartu Anggota">
+                                        <i class="bi bi-card-heading"></i>
+                                    </a>
+                                    
+                                    <a href="<?= base_url('anggota/edit/' . $a['id']) ?>" class="btn btn-sm btn-warning" title="Edit Data">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    
+                                    <a href="<?= base_url('anggota/hapus/' . $a['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus anggota ini? Akun login juga akan terhapus.')" title="Hapus Anggota">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

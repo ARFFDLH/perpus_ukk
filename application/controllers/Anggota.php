@@ -29,6 +29,7 @@ class Anggota extends CI_Controller {
         $this->form_validation->set_rules('nis', 'NIS', 'required|trim|is_unique[anggota.nis]');
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
 
         if ($this->form_validation->run() == FALSE) {
             $data['title'] = 'Tambah Anggota';
@@ -47,16 +48,17 @@ class Anggota extends CI_Controller {
 
             $id_anggota = $this->Anggota_model->insert($data_anggota);
 
-            // Buat akun user untuk anggota
+            $pass_input = $this->input->post('password');
+            
             $data_user = array(
                 'username' => $this->input->post('nis'),
-                'password' => password_hash('siswa123', PASSWORD_DEFAULT),
+                'password' => password_hash($pass_input, PASSWORD_DEFAULT),
                 'role' => 'siswa',
                 'id_anggota' => $id_anggota
             );
             $this->db->insert('users', $data_user);
 
-            $this->session->set_flashdata('success', 'Anggota berhasil ditambahkan! Password default: siswa123');
+            $this->session->set_flashdata('success', 'Anggota dan Akun berhasil ditambahkan!');
             redirect('anggota');
         }
     }
@@ -86,9 +88,32 @@ class Anggota extends CI_Controller {
             );
 
             $this->Anggota_model->update($id, $update_data);
+            
+            $new_password = $this->input->post('password');
+            if (!empty($new_password)) {
+                $this->db->where('id_anggota', $id);
+                $this->db->update('users', ['password' => password_hash($new_password, PASSWORD_DEFAULT)]);
+            }
+
             $this->session->set_flashdata('success', 'Anggota berhasil diupdate!');
             redirect('anggota');
         }
+    }
+
+    /**
+     * FUNGSI BARU: GENERATE KARTU ANGGOTA
+     */
+    public function kartu($id) {
+        $data['anggota'] = $this->Anggota_model->get_by_id($id);
+        
+        if (!$data['anggota']) {
+            show_404();
+        }
+
+        $data['title'] = 'Cetak Kartu Anggota - ' . $data['anggota']['nama'];
+        
+        // Memanggil view khusus cetak yang sudah kita buat sebelumnya
+        $this->load->view('admin/anggota/kartu_cetak', $data);
     }
 
     public function hapus($id) {
@@ -98,7 +123,6 @@ class Anggota extends CI_Controller {
             show_404();
         }
 
-        // Hapus user terkait
         $this->db->where('id_anggota', $id);
         $this->db->delete('users');
 

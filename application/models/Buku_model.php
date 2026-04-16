@@ -5,7 +5,15 @@ class Buku_model extends CI_Model {
 
     private $table = 'buku';
 
-    public function get_all() {
+    public function get_all($keyword = null) {
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('judul', $keyword);
+            $this->db->or_like('pengarang', $keyword);
+            $this->db->or_like('kategori', $keyword);
+            $this->db->or_like('kode_buku', $keyword);
+            $this->db->group_end();
+        }
         $this->db->order_by('judul', 'ASC');
         return $this->db->get($this->table)->result_array();
     }
@@ -15,7 +23,15 @@ class Buku_model extends CI_Model {
         return $this->db->get($this->table)->row_array();
     }
 
-    public function get_available() {
+    public function get_available($keyword = null) {
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('judul', $keyword);
+            $this->db->or_like('pengarang', $keyword);
+            $this->db->or_like('kategori', $keyword);
+            $this->db->or_like('kode_buku', $keyword);
+            $this->db->group_end();
+        }
         $this->db->where('stok >', 0);
         $this->db->order_by('judul', 'ASC');
         return $this->db->get($this->table)->result_array();
