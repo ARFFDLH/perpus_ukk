@@ -8,6 +8,24 @@
     </a>
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form action="<?= base_url('anggota') ?>" method="get">
+            <div class="input-group">
+                <input type="text" name="keyword" class="form-control" placeholder="Cari berdasarkan nama atau NIS..." value="<?= $this->input->get('keyword') ?>">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search me-1"></i> Cari
+                </button>
+                <?php if ($this->input->get('keyword')): ?>
+                    <a href="<?= base_url('anggota') ?>" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Bersihkan
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">

@@ -5,7 +5,13 @@ class Anggota_model extends CI_Model {
 
     private $table = 'anggota';
 
-    public function get_all() {
+    public function get_all($keyword = null) {
+        if ($keyword) {
+            $this->db->group_start();
+            $this->db->like('nama', $keyword);
+            $this->db->or_like('nis', $keyword);
+            $this->db->group_end();
+        }
         $this->db->order_by('nama', 'ASC');
         return $this->db->get($this->table)->result_array();
     }

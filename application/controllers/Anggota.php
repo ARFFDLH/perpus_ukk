@@ -16,8 +16,10 @@ class Anggota extends CI_Controller {
     }
 
     public function index() {
+        $keyword = $this->input->get('keyword');
         $data['title'] = 'Kelola Data Anggota';
-        $data['anggota'] = $this->Anggota_model->get_all();
+        $data['anggota'] = $this->Anggota_model->get_all($keyword);
+        $data['keyword'] = $keyword;
         
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar_admin', $data);
