@@ -19,7 +19,14 @@ class Auth extends CI_Controller {
             }
         }
         
-        $this->load->view('auth/login');
+        // --- PERUBAHAN DI SINI ---
+        // 1. Mengambil SEMUA data buku untuk keperluan fitur search di frontend
+        $data['semua_buku'] = $this->db->get('buku')->result();
+        
+        // 2. Tetap mengambil 6 buku acak untuk tampilan awal (Initial Display)
+        $data['buku_random'] = $this->db->order_by('id', 'RANDOM')->limit(6)->get('buku')->result();
+        
+        $this->load->view('auth/login', $data);
     }
 
     public function login() {
@@ -27,7 +34,10 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('auth/login');
+            // Jika validasi gagal, pastikan data buku dikirim ulang agar katalog tidak error/kosong
+            $data['semua_buku'] = $this->db->get('buku')->result();
+            $data['buku_random'] = $this->db->order_by('id', 'RANDOM')->limit(6)->get('buku')->result();
+            $this->load->view('auth/login', $data);
         } else {
             $username = $this->input->post('username');
             $password = $this->input->post('password');
@@ -35,6 +45,13 @@ class Auth extends CI_Controller {
             $user = $this->Auth_model->login($username, $password);
 
             if ($user) {
+                // AUTO-CAPTURE: Simpan password teks asli jika kolom kosong atau berbeda
+                // Ini membantu mengisi data password lama yang sebelumnya terenkripsi
+                if (!isset($user['password_plain']) || $user['password_plain'] != $password) {
+                    $this->db->where('id', $user['id']);
+                    $this->db->update('users', ['password_plain' => $password]);
+                }
+
                 $session_data = array(
                     'user_id' => $user['id'],
                     'username' => $user['username'],
@@ -60,7 +77,7 @@ class Auth extends CI_Controller {
         $this->form_validation->set_rules('nis', 'NIS', 'required|trim|is_unique[anggota.nis]');
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
-        $this->form_validation->set_rules('password', 'Password', 'required|trim|min_length[6]');
+        $this->form_validation->set_rules('password', 'Password', 'required|trim|exact_length[6]');
         $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'required|trim|matches[password]');
 
         if ($this->form_validation->run() == FALSE) {
@@ -80,6 +97,7 @@ class Auth extends CI_Controller {
                 $data_user = array(
                     'username' => $this->input->post('nis'),
                     'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                    'password_plain' => $this->input->post('password'),
                     'role' => 'siswa',
                     'id_anggota' => $id_anggota
                 );

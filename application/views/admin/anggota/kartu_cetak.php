@@ -93,13 +93,10 @@
             </div>
         </div>
         
-        <div class="d-flex gap-3 mt-2">
-            <div class="photo">
-                <i class="bi bi-person-fill" style="font-size: 40px;"></i>
-            </div>
-            <div class="info flex-grow-1">
+        <div class="mt-3">
+            <div class="info">
                 <table>
-                    <tr><td width="50">NIS</td><td width="10">:</td><td><strong><?= $anggota['nis'] ?></strong></td></tr>
+                    <tr><td width="70">NIS</td><td width="10">:</td><td><strong><?= $anggota['nis'] ?></strong></td></tr>
                     <tr><td>NAMA</td><td>:</td><td><strong><?= strtoupper($anggota['nama']) ?></strong></td></tr>
                     <tr><td>KELAS</td><td>:</td><td><?= $anggota['kelas'] ?></td></tr>
                     <tr><td>ALAMAT</td><td>:</td><td><?= $anggota['alamat'] ?></td></tr>

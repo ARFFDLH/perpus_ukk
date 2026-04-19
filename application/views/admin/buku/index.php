@@ -5,20 +5,14 @@
     </div>
     
     <div class="d-flex flex-column flex-md-row gap-3 mt-3 mt-md-0">
-        <form action="<?= base_url('buku') ?>" method="GET" class="d-flex">
+        <div class="d-flex">
             <div class="input-group shadow-sm" style="border-radius: var(--radius-md); overflow: hidden;">
                 <span class="input-group-text bg-white border-0 ps-3">
                     <i class="bi bi-search text-muted"></i>
                 </span>
-                <input type="text" name="keyword" class="form-control border-0 py-2 ps-1" placeholder="Cari buku..." value="<?= isset($keyword) ? htmlspecialchars($keyword) : '' ?>" style="min-width: 200px;">
-                <button type="submit" class="btn btn-white border-0 text-primary fw-bold px-3">Cari</button>
+                <input type="text" id="searchInput" class="form-control border-0 py-2 ps-1" placeholder="Cari judul, kode, atau pengarang..." style="min-width: 250px;">
             </div>
-            <?php if (isset($keyword) && $keyword): ?>
-                <a href="<?= base_url('buku') ?>" class="btn btn-light ms-2 d-flex align-items-center" title="Hapus Filter">
-                    <i class="bi bi-x-lg"></i>
-                </a>
-            <?php endif; ?>
-        </form>
+        </div>
         
         <a href="<?= base_url('buku/tambah') ?>" class="btn btn-primary d-flex align-items-center shadow-sm" style="border-radius: var(--radius-md); font-weight: 600;">
             <i class="bi bi-plus-circle me-2"></i>Tambah Buku
@@ -29,7 +23,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover" id="bukuTable">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -43,17 +37,10 @@
                 </thead>
                 <tbody>
                     <?php if (empty($buku)): ?>
-                        <tr>
+                        <tr id="noDataRow">
                             <td colspan="7" class="text-center py-5 text-muted">
                                 <i class="bi bi-search mb-3 d-block" style="font-size: 2rem; opacity: 0.5;"></i>
-                                <?php if (isset($keyword) && $keyword): ?>
-                                    Data buku dengan kata kunci "<strong><?= htmlspecialchars($keyword) ?></strong>" tidak ditemukan.<br>
-                                    <a href="<?= base_url('buku') ?>" class="btn btn-sm btn-link text-primary mt-2 text-decoration-none">
-                                        <i class="bi bi-arrow-left me-1"></i>Lihat Semua Buku
-                                    </a>
-                                <?php else: ?>
-                                    Belum ada data buku yang tersedia.
-                                <?php endif; ?>
+                                Belum ada data buku yang tersedia.
                             </td>
                         </tr>
                     <?php else: ?>
@@ -81,9 +68,50 @@
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        <!-- Baris untuk pesan jika hasil cari tidak ditemukan -->
+                        <tr id="noMatchRow" style="display: none;">
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="bi bi-search me-2"></i>Data buku yang Anda cari tidak ditemukan.
+                            </td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('bukuTable');
+    const rows = table.querySelectorAll('tbody tr:not(#noDataRow):not(#noMatchRow)');
+    const noMatchRow = document.getElementById('noMatchRow');
+
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchText = this.value.toLowerCase();
+            let matchesFound = 0;
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(searchText)) {
+                    row.style.display = '';
+                    matchesFound++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan jika tidak ada yang cocok
+            if (noMatchRow) {
+                if (matchesFound === 0 && searchText !== '') {
+                    noMatchRow.style.display = '';
+                } else {
+                    noMatchRow.style.display = 'none';
+                }
+            }
+        });
+    }
+});
+</script>

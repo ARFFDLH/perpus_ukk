@@ -9,21 +9,27 @@
             <p style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">Sistem Siswa</p>
         </div>
 
-        <div class="user-info d-flex align-items-center mb-5 p-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-lg);">
-            <div class="avatar me-3">
-                <div style="width: 44px; height: 44px; background-color: var(--success-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.2rem;">
-                    <?= strtoupper(substr($this->session->userdata('username'), 0, 1)) ?>
+        <?php 
+        $ci =& get_instance();
+        $ci->load->model('Anggota_model');
+        $id_anggota = $this->session->userdata('id_anggota');
+        $curr_anggota = $ci->Anggota_model->get_by_id($id_anggota);
+        ?>
+        <div class="user-profile py-4 text-center border-bottom mb-4">
+            <div class="user-avatar-wrapper shadow-sm mx-auto mb-3" style="width: 60px; height: 60px; background-color: var(--success-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px;">
+                <div class="avatar-initials">
+                    <i class="bi bi-person-fill"></i>
                 </div>
             </div>
-            <div>
-                <h6 style="color: white; margin-bottom: 2px; font-weight: 600;"><?= $this->session->userdata('username') ?></h6>
-                <span class="badge" style="background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.7rem; padding: 0.25em 0.6em;">Siswa Aktif</span>
+            <div class="user-info">
+                <h6 class="fw-bold text-white mb-0"><?= htmlspecialchars($this->session->userdata('username')) ?></h6>
+                <p class="text-muted small mb-0">Siswa Aktif</p>
             </div>
         </div>
 
         <ul class="nav flex-column gap-2">
             <li class="nav-item">
-                <a class="nav-link <?= $this->uri->segment(1) == 'siswa' ? 'active' : '' ?>" href="<?= base_url('siswa') ?>" style="color: #94a3b8; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 0.95rem; transition: var(--transition-all);">
+                <a class="nav-link <?= ($this->uri->segment(1) == 'siswa' && ($this->uri->segment(2) == '' || $this->uri->segment(2) == 'index')) ? 'active' : '' ?>" href="<?= base_url('siswa') ?>" style="color: #94a3b8; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 0.95rem; transition: var(--transition-all);">
                     <i class="bi bi-grid-fill" style="font-size: 20px;"></i>
                     <span>Dashboard</span>
                 </a>
@@ -38,6 +44,12 @@
                 <a class="nav-link <?= $this->uri->segment(2) == 'riwayat' ? 'active' : '' ?>" href="<?= base_url('peminjaman/riwayat') ?>" style="color: #94a3b8; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 0.95rem; transition: var(--transition-all);">
                     <i class="bi bi-clock-history" style="font-size: 20px;"></i>
                     <span>Riwayat Peminjaman</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?= $this->uri->segment(2) == 'profil' ? 'active' : '' ?>" href="<?= base_url('siswa/profil') ?>" style="color: #94a3b8; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 0.95rem; transition: var(--transition-all);">
+                    <i class="bi bi-person-fill" style="font-size: 20px;"></i>
+                    <span>Profil Saya</span>
                 </a>
             </li>
             <li class="nav-item mt-4">

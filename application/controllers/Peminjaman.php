@@ -18,10 +18,8 @@ class Peminjaman extends CI_Controller {
     }
 
     public function index() {
-        $keyword = $this->input->get('keyword');
         $data['title'] = 'Katalog Buku';
-        $data['buku'] = $this->Buku_model->get_available($keyword);
-        $data['keyword'] = $keyword;
+        $data['buku'] = $this->Buku_model->get_available(); // Ambil semua buku yang tersedia untuk filter client-side
         
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar_siswa', $data);

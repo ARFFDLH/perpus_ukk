@@ -31,4 +31,63 @@ class Siswa extends CI_Controller {
         $this->load->view('siswa/dashboard', $data);
         $this->load->view('templates/footer');
     }
+
+    public function profil() {
+        $id_anggota = $this->session->userdata('id_anggota');
+        $data['title'] = 'Profil Saya';
+        $data['anggota'] = $this->Anggota_model->get_by_id($id_anggota);
+        
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar_siswa', $data);
+        $this->load->view('siswa/profil', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function update_profil() {
+        $id_anggota = $this->session->userdata('id_anggota');
+        $user_id = $this->session->userdata('user_id');
+
+        $this->form_validation->set_rules('nama', 'Nama Lengkap', 'required|trim');
+        $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
+        
+        if ($this->input->post('password')) {
+            $this->form_validation->set_rules('password', 'Password', 'required|trim|exact_length[6]');
+        }
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->profil();
+        } else {
+            // Update table anggota
+            $data_anggota = [
+                'nama' => $this->input->post('nama'),
+                'kelas' => $this->input->post('kelas'),
+                'alamat' => $this->input->post('alamat'),
+                'telepon' => $this->input->post('telepon')
+            ];
+
+            $this->Anggota_model->update($id_anggota, $data_anggota);
+
+            // Update user table if password changed
+            if ($this->input->post('password')) {
+                $data_user = [
+                    'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                    'password_plain' => $this->input->post('password')
+                ];
+                $this->load->model('Auth_model');
+                $this->Auth_model->update_user($user_id, $data_user);
+            }
+
+            $this->session->set_flashdata('success', 'Profil berhasil diperbarui!');
+            redirect('siswa/profil');
+        }
+    }
+
+    public function cetak_kartu() {
+        $id_anggota = $this->session->userdata('id_anggota');
+        $data['anggota'] = $this->Anggota_model->get_by_id($id_anggota);
+        $data['title'] = 'Cetak Kartu Siswa - ' . $data['anggota']['nama'];
+        
+        // Memakai view yang sama dengan admin agar konsisten
+        $this->load->view('admin/anggota/kartu_cetak', $data);
+    }
 }

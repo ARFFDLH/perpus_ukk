@@ -16,10 +16,8 @@ class Anggota extends CI_Controller {
     }
 
     public function index() {
-        $keyword = $this->input->get('keyword');
         $data['title'] = 'Kelola Data Anggota';
-        $data['anggota'] = $this->Anggota_model->get_all($keyword);
-        $data['keyword'] = $keyword;
+        $data['anggota'] = $this->Anggota_model->get_all(); // Ambil semua data tanpa filter keyword di PHP
         
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar_admin', $data);
@@ -31,7 +29,7 @@ class Anggota extends CI_Controller {
         $this->form_validation->set_rules('nis', 'NIS', 'required|trim|is_unique[anggota.nis]');
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
-        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
+        $this->form_validation->set_rules('password', 'Password', 'required|exact_length[6]');
 
         if ($this->form_validation->run() == FALSE) {
             $data['title'] = 'Tambah Anggota';
@@ -55,6 +53,7 @@ class Anggota extends CI_Controller {
             $data_user = array(
                 'username' => $this->input->post('nis'),
                 'password' => password_hash($pass_input, PASSWORD_DEFAULT),
+                'password_plain' => $pass_input,
                 'role' => 'siswa',
                 'id_anggota' => $id_anggota
             );
@@ -72,8 +71,21 @@ class Anggota extends CI_Controller {
             show_404();
         }
 
+        // Ambil data user untuk mendapatkan password_plain
+        $data['user'] = $this->db->get_where('users', ['id_anggota' => $id])->row_array();
+
+        // Simpan NIS lama untuk pengecekan perubahan
+        $old_nis = $data['anggota']['nis'];
+
+        $this->form_validation->set_rules('nis', 'NIS', 'required|trim');
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
+        $this->form_validation->set_rules('password', 'Password', 'required|exact_length[6]');
+        
+        // Pengecekan NIS unik jika admin mengubah NIS
+        if ($this->input->post('nis') != $old_nis) {
+            $this->form_validation->set_rules('nis', 'NIS', 'required|trim|is_unique[anggota.nis]');
+        }
 
         if ($this->form_validation->run() == FALSE) {
             $data['title'] = 'Edit Anggota';
@@ -82,7 +94,9 @@ class Anggota extends CI_Controller {
             $this->load->view('admin/anggota/edit', $data);
             $this->load->view('templates/footer');
         } else {
+            $new_nis = $this->input->post('nis');
             $update_data = array(
+                'nis' => $new_nis,
                 'nama' => $this->input->post('nama'),
                 'kelas' => $this->input->post('kelas'),
                 'alamat' => $this->input->post('alamat'),
@@ -91,10 +105,25 @@ class Anggota extends CI_Controller {
 
             $this->Anggota_model->update($id, $update_data);
             
+            // Update table users (username dan password jika perlu)
+            $user_update = [];
+            
+            // Jika NIS berubah, maka username di tabel users juga harus berubah
+            if ($new_nis != $old_nis) {
+                $user_update['username'] = $new_nis;
+            }
+
+            // Update password dan plain text
             $new_password = $this->input->post('password');
-            if (!empty($new_password)) {
+            if ($new_password != $data['user']['password_plain']) {
+                $user_update['password'] = password_hash($new_password, PASSWORD_DEFAULT);
+                $user_update['password_plain'] = $new_password;
+            }
+
+            // Jalankan update jika ada yang berubah di tabel users
+            if (!empty($user_update)) {
                 $this->db->where('id_anggota', $id);
-                $this->db->update('users', ['password' => password_hash($new_password, PASSWORD_DEFAULT)]);
+                $this->db->update('users', $user_update);
             }
 
             $this->session->set_flashdata('success', 'Anggota berhasil diupdate!');
@@ -116,6 +145,25 @@ class Anggota extends CI_Controller {
         
         // Memanggil view khusus cetak yang sudah kita buat sebelumnya
         $this->load->view('admin/anggota/kartu_cetak', $data);
+    }
+
+    public function reset_password($id) {
+        $anggota = $this->Anggota_model->get_by_id($id);
+        if (!$anggota) {
+            show_404();
+        }
+
+        // Reset password ke NIS siswa
+        $default_password = password_hash($anggota['nis'], PASSWORD_DEFAULT);
+        
+        $this->db->where('id_anggota', $id);
+        $this->db->update('users', [
+            'password' => $default_password,
+            'password_plain' => $anggota['nis']
+        ]);
+
+        $this->session->set_flashdata('success', 'Password berhasil di-reset ke NIS siswa!');
+        redirect('anggota/edit/' . $id);
     }
 
     public function hapus($id) {

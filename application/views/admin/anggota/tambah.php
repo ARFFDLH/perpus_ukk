@@ -34,7 +34,7 @@
                 <label class="form-label">Password Login <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-key"></i></span>
-                    <input type="password" class="form-control" name="password" placeholder="Masukkan password minimal 6 karakter" required>
+                    <input type="password" class="form-control" name="password" placeholder="Masukkan password (harus 6 karakter)" required>
                 </div>
                 <?= form_error('password', '<small class="text-danger">', '</small>') ?>
             </div>

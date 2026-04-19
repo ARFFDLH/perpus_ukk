@@ -10,26 +10,19 @@
 
 <div class="row mb-3">
     <div class="col-md-6">
-        <form action="<?= base_url('anggota') ?>" method="get">
-            <div class="input-group">
-                <input type="text" name="keyword" class="form-control" placeholder="Cari berdasarkan nama atau NIS..." value="<?= $this->input->get('keyword') ?>">
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search me-1"></i> Cari
-                </button>
-                <?php if ($this->input->get('keyword')): ?>
-                    <a href="<?= base_url('anggota') ?>" class="btn btn-outline-secondary">
-                        <i class="bi bi-x-circle me-1"></i> Bersihkan
-                    </a>
-                <?php endif; ?>
-            </div>
-        </form>
+        <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0 pe-2">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" id="searchInput" class="form-control border-start-0 ps-1 py-2" placeholder="Cari berdasarkan Nama atau NIS...">
+        </div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover" id="anggotaTable">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -42,7 +35,7 @@
                 </thead>
                 <tbody>
                     <?php if (empty($anggota)): ?>
-                        <tr>
+                        <tr id="noDataRow">
                             <td colspan="6" class="text-center py-4 text-muted">Belum ada data anggota</td>
                         </tr>
                     <?php else: ?>
@@ -70,9 +63,50 @@
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        <!-- Baris untuk pesan jika hasil cari tidak ditemukan -->
+                        <tr id="noMatchRow" style="display: none;">
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="bi bi-search me-2"></i>Data anggota yang Anda cari tidak ditemukan.
+                            </td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('anggotaTable');
+    const rows = table.querySelectorAll('tbody tr:not(#noDataRow):not(#noMatchRow)');
+    const noMatchRow = document.getElementById('noMatchRow');
+
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchText = this.value.toLowerCase();
+            let matchesFound = 0;
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(searchText)) {
+                    row.style.display = '';
+                    matchesFound++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan jika tidak ada yang cocok
+            if (noMatchRow) {
+                if (matchesFound === 0 && searchText !== '') {
+                    noMatchRow.style.display = '';
+                } else {
+                    noMatchRow.style.display = 'none';
+                }
+            }
+        });
+    }
+});
+</script>

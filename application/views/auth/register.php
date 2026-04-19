@@ -8,76 +8,66 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #10b981;
-            --primary-hover: #059669;
+            --primary-color: #4338ca; /* Kembali ke Indigo */
+            --primary-hover: #3730a3;
             --text-main: #334155;
             --text-muted: #64748b;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Outfit', sans-serif;
             min-height: 100vh;
             background-color: #f8fafc;
             overflow-x: hidden;
+            color: var(--text-main);
         }
 
-        .split-layout {
-            display: flex;
-            min-height: 100vh;
-        }
+        .split-layout { display: flex; min-height: 100vh; }
 
         /* Left side - Banner */
         .auth-banner {
             flex: 1;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #4338ca 0%, #3b82f6 100%);
             position: relative;
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: 60px 40px;
             color: white;
             text-align: center;
             overflow: hidden;
         }
 
-        @media (min-width: 992px) {
-            .auth-banner {
-                display: flex;
-            }
+        @media (min-width: 992px) { .auth-banner { display: flex; } }
+
+        .banner-content { 
+            z-index: 2; 
+            position: relative; 
+            max-width: 450px;
+            animation: fadeInDown 0.8s ease-out;
         }
 
-        .auth-banner::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.05)' fill-rule='evenodd'/%3E%3C/svg%3E");
-            z-index: 1;
-        }
-
-        .banner-content {
-            z-index: 2;
-            position: relative;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .banner-content i {
-            font-size: 80px;
-            margin-bottom: 24px;
+            font-size: 70px;
+            margin-bottom: 25px;
             display: inline-block;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
         }
 
         .banner-content h2 {
@@ -88,9 +78,8 @@
         }
 
         .banner-content p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 400px;
+            font-size: 1.15rem;
+            opacity: 0.8;
             line-height: 1.6;
         }
 
@@ -106,161 +95,78 @@
         }
 
         @media (min-width: 992px) {
-            .auth-form-wrapper {
-                flex: 0 0 550px;
-                box-shadow: -20px 0 40px rgba(0,0,0,0.05);
-                z-index: 10;
-            }
+            .auth-form-wrapper { flex: 0 0 550px; box-shadow: -20px 0 60px rgba(0,0,0,0.05); z-index: 10; }
         }
 
-        .auth-form {
-            width: 100%;
-            max-width: 460px;
-            animation: fadeIn 0.8s ease-out;
-        }
+        .auth-form { width: 100%; max-width: 440px; animation: fadeInUp 0.8s ease-out; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .auth-header {
-            margin-bottom: 30px;
+        .brand-title { 
+            color: var(--primary-color); 
+            font-weight: 800; 
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex; 
+            align-items: center;
+            letter-spacing: -0.5px;
         }
-
-        .auth-header h1 {
+        
+        .brand-title i {
             font-size: 2rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 8px;
-            letter-spacing: -0.025em;
+            margin-right: 12px;
+            filter: drop-shadow(0 4px 6px rgba(67, 56, 202, 0.2));
         }
 
-        .auth-header p {
-            color: var(--text-muted);
-            font-size: 1rem;
+        .auth-header h1 { font-size: 2.2rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; letter-spacing: -0.025em; }
+        .auth-header p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 30px; }
+
+        .form-floating { margin-bottom: 15px; }
+        .form-floating .form-control { 
+            border: none; 
+            border-bottom: 2px solid #f1f5f9; 
+            border-radius: 0; 
+            padding: 24px 0 8px; 
+            height: auto; 
+            background-color: transparent; 
+            box-shadow: none !important; 
+            font-size: 15px; 
+            transition: all 0.3s;
+        }
+        .form-floating .form-control:focus { border-bottom-color: var(--primary-color); }
+        .form-floating label { padding: 12px 0; color: var(--text-muted); font-weight: 500; font-size: 15px; }
+
+        .btn-register { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            border: none; 
+            border-radius: 12px; 
+            background: linear-gradient(135deg, #4338ca, #3b82f6);
+            color: white; 
+            margin-top: 15px; 
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(67, 56, 202, 0.4);
+        }
+        .btn-register:hover { 
+            background: linear-gradient(135deg, #3730a3, #2563eb);
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px -5px rgba(67, 56, 202, 0.5);
         }
 
-        .form-floating {
-            margin-bottom: 20px;
-        }
+        .login-link { text-align: center; margin-top: 30px; color: var(--text-muted); font-weight: 500; }
+        .login-link a { color: var(--primary-color); text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .login-link a:hover { color: var(--primary-hover); text-decoration: underline; }
 
-        .form-floating .form-control {
-            border: none;
-            border-bottom: 2px solid #e2e8f0;
-            border-radius: 0;
-            padding: 24px 0 8px;
-            height: auto;
-            font-size: 15px;
-            background-color: transparent;
-            color: #0f172a;
-            transition: all 0.3s ease;
-            box-shadow: none !important;
-        }
-
-        .form-floating .form-control:focus {
-            border-bottom-color: var(--primary-color);
-        }
-
-        .form-floating label {
-            padding: 12px 0 0;
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 15px;
-            transform-origin: 0 0;
-            transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
-        }
-
-        .form-floating > .form-control:focus ~ label,
-        .form-floating > .form-control:not(:placeholder-shown) ~ label {
-            transform: scale(0.85) translateY(-1rem);
-            color: var(--primary-color);
-        }
-
-        .btn-register {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2), 0 2px 4px -1px rgba(16, 185, 129, 0.1);
-        }
-
-        .btn-register:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3), 0 4px 6px -2px rgba(16, 185, 129, 0.15);
-        }
-
-        .btn-register:active {
-            transform: translateY(0);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 24px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .login-link a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .login-link a:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-            font-weight: 500;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .alert-danger { background-color: #fee2e2; color: #991b1b; }
-
-        .validation-error {
-            color: #ef4444;
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 5px;
-            display: block;
-        }
+        .alert { border: none; border-radius: 12px; padding: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .validation-error { color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 4px; display: block; }
         
-        .mobile-logo {
-            display: none;
-            color: var(--primary-color);
-            font-size: 40px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .row {
-            margin-left: -10px;
-            margin-right: -10px;
-        }
-
-        .row > div {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-        
-        @media (max-width: 991px) {
-            .mobile-logo { display: block; }
-        }
+        .mobile-logo { display: none; color: var(--primary-color); font-size: 45px; margin-bottom: 20px; text-align: center; }
+        @media (max-width: 991px) { .mobile-logo { display: block; } }
     </style>
 </head>
 <body>
@@ -276,11 +182,14 @@
         <div class="auth-form-wrapper">
             <div class="auth-form">
                 <div class="mobile-logo">
-                    <i class="bi bi-person-plus-fill"></i>
+                    <i class="bi bi-book-half"></i>
                 </div>
                 <div class="auth-header">
+                    <h2 class="brand-title d-none d-lg-flex">
+                        <i class="bi bi-book-half"></i> Perpustakaan Digital
+                    </h2>
                     <h1>Buat Akun Baru</h1>
-                    <p>Lengkapi formulir di bawah ini dengan data diri Anda.</p>
+                    <p>Bergabunglah dengan komunitas pembaca kami dan nikmati kemudahan akses koleksi buku.</p>
                 </div>
 
                 <?php if ($this->session->flashdata('error')): ?>
@@ -291,7 +200,7 @@
                 <?php endif; ?>
 
                 <form action="<?= base_url('auth/register') ?>" method="post">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="nis" name="nis" placeholder="NIS" value="<?= set_value('nis') ?>" required>
@@ -314,7 +223,7 @@
                         <?= form_error('nama', '<span class="validation-error">', '</span>') ?>
                     </div>
 
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="alamat" name="alamat" placeholder="Alamat" value="<?= set_value('alamat') ?>">
@@ -329,11 +238,11 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                                <label for="password">Password (min 6)</label>
+                                <label for="password">Password (Harus 6 Karakter)</label>
                                 <?= form_error('password', '<span class="validation-error">', '</span>') ?>
                             </div>
                         </div>

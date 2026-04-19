@@ -5,42 +5,31 @@
     </div>
     
     <div class="mt-3 mt-md-0" style="min-width: 300px;">
-        <form action="<?= base_url('peminjaman') ?>" method="GET">
-            <div class="input-group overflow-hidden border-0 shadow-sm" style="border-radius: var(--radius-md);">
-                <span class="input-group-text bg-white border-0 ps-3">
-                    <i class="bi bi-search text-muted"></i>
-                </span>
-                <input type="text" name="keyword" class="form-control border-0 py-2 ps-1" placeholder="Cari judul, pengarang..." value="<?= isset($keyword) ? htmlspecialchars($keyword) : '' ?>">
-                <button type="submit" class="btn btn-primary px-3">Cari</button>
-            </div>
-            <?php if (isset($keyword) && $keyword): ?>
-                <div class="text-end mt-1">
-                    <a href="<?= base_url('peminjaman') ?>" class="text-decoration-none small text-muted">
-                        <i class="bi bi-x-circle me-1"></i>Hapus Filter
-                    </a>
-                </div>
-            <?php endif; ?>
-        </form>
+        <div class="input-group overflow-hidden border-0 shadow-sm" style="border-radius: var(--radius-md);">
+            <span class="input-group-text bg-white border-0 ps-3">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" id="searchInput" class="form-control border-0 py-2 ps-1" placeholder="Cari judul, pengarang, atau kategori...">
+        </div>
     </div>
 </div>
 
-<div class="row g-4 mb-5">
+<div class="row g-4 mb-5" id="bookContainer">
     <?php if (empty($buku)): ?>
-        <div class="col-12">
+        <div class="col-12" id="noDataMessage">
             <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl);">
                 <div class="card-body text-center py-5">
                     <div class="mb-4 d-inline-flex justify-content-center align-items-center" style="width: 100px; height: 100px; background-color: var(--primary-light); border-radius: 50%;">
                         <i class="bi bi-search" style="font-size: 48px; color: var(--primary-color);"></i>
                     </div>
-                    <h4 class="fw-bold text-dark mb-2">Buku Tidak Ditemukan</h4>
-                    <p class="text-muted mb-3">Maaf, tidak ada buku yang sesuai dengan kata kunci "<strong><?= htmlspecialchars($keyword) ?></strong>".</p>
-                    <a href="<?= base_url('peminjaman') ?>" class="btn btn-primary" style="border-radius: var(--radius-md);">Lihat Semua Buku</a>
+                    <h4 class="fw-bold text-dark mb-2">Belum Ada Koleksi</h4>
+                    <p class="text-muted mb-3">Maaf, saat ini belum ada buku yang tersedia untuk dipinjam.</p>
                 </div>
             </div>
         </div>
     <?php else: ?>
         <?php foreach ($buku as $b): ?>
-        <div class="col-sm-6 col-lg-4 col-xl-3">
+        <div class="col-sm-6 col-lg-4 col-xl-3 book-item">
             <div class="card h-100 border-0 shadow-sm book-card" style="border-radius: var(--radius-xl); overflow: hidden; transition: var(--transition-all); display: flex; flex-direction: column;">
                 <!-- Card Header (Cover Image Placeholder) -->
                 <div class="position-relative pt-4 pb-3 px-3 w-100 d-flex justify-content-center" style="background: linear-gradient(135deg, rgba(67, 56, 202, 0.05), rgba(139, 92, 246, 0.1)); min-height: 200px;">
@@ -61,18 +50,18 @@
                             <?= htmlspecialchars($b['kode_buku']) ?>
                         </span>
                         <?php if ($b['kategori']): ?>
-                            <span class="badge border text-muted" style="background: white; font-size: 0.7rem; font-weight: 500;">
+                            <span class="badge border text-muted category-badge" style="background: white; font-size: 0.7rem; font-weight: 500;">
                                 <?= htmlspecialchars($b['kategori']) ?>
                             </span>
                         <?php endif; ?>
                     </div>
                     
-                    <h5 class="fw-bold mb-1 text-dark" style="line-height: 1.3; font-size: 1.15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    <h5 class="fw-bold mb-1 text-dark book-title" style="line-height: 1.3; font-size: 1.15rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                         <?= htmlspecialchars($b['judul']) ?>
                     </h5>
                     
                     <p class="text-muted mb-3" style="font-size: 0.85rem; font-weight: 500;">
-                        Oleh <span class="text-dark"><?= htmlspecialchars($b['pengarang']) ?></span>
+                        Oleh <span class="text-dark book-author"><?= htmlspecialchars($b['pengarang']) ?></span>
                         <?php if ($b['tahun_terbit']): ?>
                             • <?= $b['tahun_terbit'] ?>
                         <?php endif; ?>
@@ -99,8 +88,58 @@
             </div>
         </div>
         <?php endforeach; ?>
+        <!-- Pesan jika hasil cari tidak ditemukan -->
+        <div class="col-12" id="noMatchMessage" style="display: none;">
+            <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl);">
+                <div class="card-body text-center py-5">
+                    <div class="mb-3">
+                        <i class="bi bi-search text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                    <h5 class="text-muted">Buku yang Anda cari tidak ditemukan.</h5>
+                    <button type="button" class="btn btn-link text-primary text-decoration-none mt-2" onclick="document.getElementById('searchInput').value = ''; document.getElementById('searchInput').dispatchEvent(new Event('keyup'));">
+                        Bersihkan Pencarian
+                    </button>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const bookItems = document.querySelectorAll('.book-item');
+    const noMatchMessage = document.getElementById('noMatchMessage');
+
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchText = this.value.toLowerCase();
+            let matchesFound = 0;
+
+            bookItems.forEach(item => {
+                const title = item.querySelector('.book-title').innerText.toLowerCase();
+                const author = item.querySelector('.book-author').innerText.toLowerCase();
+                const category = item.querySelector('.category-badge') ? item.querySelector('.category-badge').innerText.toLowerCase() : '';
+                
+                if (title.includes(searchText) || author.includes(searchText) || category.includes(searchText)) {
+                    item.style.display = '';
+                    matchesFound++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (noMatchMessage) {
+                if (matchesFound === 0 && searchText !== '') {
+                    noMatchMessage.style.display = '';
+                } else {
+                    noMatchMessage.style.display = 'none';
+                }
+            }
+        });
+    }
+});
+</script>
 
 <style>
 .book-card:hover {

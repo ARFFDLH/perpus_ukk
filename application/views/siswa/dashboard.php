@@ -19,22 +19,22 @@
             <div style="position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
             
             <div class="card-body p-4 position-relative z-1 d-flex flex-column justify-content-center align-items-center">
-                <div class="mb-3" style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                    <i class="bi bi-person-fill" style="font-size: 40px;"></i>
-                </div>
-                <h4 class="fw-bold mb-1"><?= htmlspecialchars($anggota['nama']) ?></h4>
-                <div class="badge bg-light text-dark mb-3 px-3 py-2 border-0" style="font-weight: 600;">Siswa Aktif</div>
-                
-                <div class="w-100 mt-2 p-3 rounded" style="background: rgba(0,0,0,0.15);">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span style="opacity: 0.8; font-size: 0.9rem;">NIS</span>
-                        <span class="fw-bold"><?= htmlspecialchars($anggota['nis']) ?></span>
+                <div class="mb-3 position-relative" style="width: 100px; height: 100px;">
+                    <div style="width: 100px; height: 100px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); overflow: hidden; border: 3px solid rgba(255,255,255,0.3);">
+                        <span class="fw-bold h2 m-0" style="letter-spacing: 1px;"><?= strtoupper(substr($anggota['nama'], 0, 1)) ?></span>
                     </div>
+                </div>
+                <h4 class="fw-bold mb-1 text-center"><?= htmlspecialchars($anggota['nama']) ?></h4>
+                <div class="badge bg-light text-dark mb-3 px-3 py-2 border-0" style="font-weight: 600;">NIS: <?= htmlspecialchars($anggota['nis']) ?></div>
+                
+                <div class="w-100 mt-2 p-3 rounded mb-3" style="background: rgba(0,0,0,0.15);">
                     <div class="d-flex justify-content-between">
                         <span style="opacity: 0.8; font-size: 0.9rem;">Kelas</span>
                         <span class="fw-bold"><?= htmlspecialchars($anggota['kelas']) ?></span>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>
